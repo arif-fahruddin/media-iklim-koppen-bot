@@ -37,3 +37,6 @@ Thumbs.db
 # Dump SQL berisi nama/email pengguna dan hash password.
 # Buat ulang lokal dengan: php scripts/generate-supabase-sql.php
 /database/*.sql
+
+# Env Vercel berisi APP_KEY; jangan commit.
+.env.vercel
