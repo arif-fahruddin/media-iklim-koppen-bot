@@ -253,6 +253,23 @@ function sqlValue($value): string
     return "'" . $escaped . "'";
 }
 
+/**
+ * Nilai boolean PostgreSQL tidak menerima integer dari SQLite.
+ * Kolom yang terdaftar di sini dipaksa menjadi TRUE/FALSE.
+ */
+function sqlValueFor(string $table, string $column, $value): string
+{
+    static $booleanColumns = [
+        'materials' => ['is_published'],
+    ];
+
+    if (in_array($column, $booleanColumns[$table] ?? [], true)) {
+        return $value ? 'TRUE' : 'FALSE';
+    }
+
+    return sqlValue($value);
+}
+
 function dumpTable(string $table, array $columns, string $orderBy, array &$out): void
 {
     $rows = DB::table($table)->orderBy($orderBy)->get();
@@ -272,7 +289,7 @@ function dumpTable(string $table, array $columns, string $orderBy, array &$out):
 
         foreach ($chunk as $row) {
             $tuple = array_map(
-                fn ($col) => sqlValue($row->{$col} ?? null),
+                fn ($col) => sqlValueFor($table, $col, $row->{$col} ?? null),
                 $columns
             );
 
