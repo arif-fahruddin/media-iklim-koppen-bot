@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
+        // Vercel menerminasi TLS dan meneruskan request sebagai HTTP.
+        // Tanpa ini, Laravel membuat URL asset http:// dan browser memblokirnya.
+        $middleware->trustProxies(at: '*');
+
         // Middleware Inertia
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
